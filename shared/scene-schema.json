@@ -1,0 +1,161 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PhysicsScene",
+  "description": "前后端共享的物理场景描述规范",
+  "type": "object",
+  "required": ["scene", "simulation"],
+  "properties": {
+    "problem": {
+      "type": "object",
+      "properties": {
+        "text": { "type": "string" },
+        "images": { "type": "array", "items": { "type": "string" } },
+        "source": { "enum": ["manual", "ai-parsed"] }
+      }
+    },
+    "scene": {
+      "type": "object",
+      "required": ["type", "gravity", "bodies", "constraints"],
+      "properties": {
+        "type": {
+          "enum": [
+            "free_body", "incline", "projectile", "circular_horizontal",
+            "circular_vertical", "connected_bodies", "spring_oscillator",
+            "conveyor_belt", "plank_block", "electric_field", "magnetic_field"
+          ]
+        },
+        "gravity": {
+          "type": "array", "minItems": 2, "maxItems": 2,
+          "items": { "type": "number" },
+          "description": "[gx, gy] 重力加速度矢量"
+        },
+        "bodies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "mass", "position", "velocity"],
+            "properties": {
+              "id": { "type": "string" },
+              "mass": { "type": "number", "minimum": 0 },
+              "position": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } },
+              "velocity": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } },
+              "charge": { "type": "number" },
+              "shape": { "enum": ["point", "rectangle", "circle"] },
+              "size": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } },
+              "color": { "type": "string" }
+            }
+          }
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "required": ["type", "angle"],
+                "properties": {
+                  "type": { "const": "incline_plane" },
+                  "angle": { "type": "number", "description": "斜面倾角（度）" },
+                  "friction_coeff": { "type": "number" },
+                  "length": { "type": "number" },
+                  "pivot": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } },
+                  "body_id": { "type": "string" }
+                }
+              },
+              {
+                "type": "object",
+                "required": ["type", "body_ids", "length"],
+                "properties": {
+                  "type": { "const": "rope" },
+                  "body_ids": { "type": "array", "items": { "type": "string" } },
+                  "length": { "type": "number" },
+                  "pivot": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } }
+                }
+              },
+              {
+                "type": "object",
+                "required": ["type", "body_id", "spring_constant", "rest_length"],
+                "properties": {
+                  "type": { "const": "spring" },
+                  "body_id": { "type": "string" },
+                  "anchor": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } },
+                  "spring_constant": { "type": "number" },
+                  "rest_length": { "type": "number" }
+                }
+              },
+              {
+                "type": "object",
+                "required": ["type", "speed", "direction"],
+                "properties": {
+                  "type": { "const": "conveyor_belt" },
+                  "speed": { "type": "number" },
+                  "direction": { "type": "number", "description": "方向角（度）" },
+                  "body_id": { "type": "string" },
+                  "length": { "type": "number" },
+                  "pivot": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } }
+                }
+              },
+              {
+                "type": "object",
+                "required": ["type", "field_strength"],
+                "properties": {
+                  "type": { "const": "electric_field" },
+                  "field_strength": { "type": "number" },
+                  "direction": { "type": "number" }
+                }
+              },
+              {
+                "type": "object",
+                "required": ["type", "field_strength"],
+                "properties": {
+                  "type": { "const": "magnetic_field" },
+                  "field_strength": { "type": "number" },
+                  "direction": { "enum": ["into_page", "out_of_page"] }
+                }
+              },
+              {
+                "type": "object",
+                "required": ["type", "body_ids", "friction_coeff"],
+                "properties": {
+                  "type": { "const": "stacked" },
+                  "body_ids": { "type": "array", "items": { "type": "string" } },
+                  "friction_coeff": { "type": "number" }
+                }
+              },
+              {
+                "type": "object",
+                "required": ["type", "body_ids", "friction_coeff"],
+                "properties": {
+                  "type": { "const": "plank" },
+                  "body_ids": { "type": "array", "items": { "type": "string" } },
+                  "friction_coeff": { "type": "number" },
+                  "ground_friction": { "type": "number" }
+                }
+              }
+            ]
+          }
+        },
+        "appliedForces": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["body_id", "vector"],
+            "properties": {
+              "body_id": { "type": "string" },
+              "vector": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } },
+              "label": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "simulation": {
+      "type": "object",
+      "required": ["duration", "time_step"],
+      "properties": {
+        "duration": { "type": "number", "description": "模拟总时长（秒）" },
+        "time_step": { "type": "number", "description": "积分步长（秒），建议 0.016" }
+      }
+    }
+  }
+}
