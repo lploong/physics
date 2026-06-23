@@ -10,7 +10,6 @@ import ForceDiagram from "./components/ForceDiagram";
 import TrajectoryView from "./components/TrajectoryView";
 import MotionCharts from "./components/MotionCharts";
 import NumericPanel from "./components/NumericPanel";
-import QuickExamples from "./components/QuickExamples";
 import SimulationControl from "./components/SimulationControl";
 import { encodeSceneToURL, decodeSceneFromURL, copyShareURL } from "./engine/share-url";
 import { exportSVGAsPNG, exportCanvasAsPNG, generateReport, downloadReport } from "./engine/report";
@@ -277,7 +276,6 @@ export default function App() {
           </div>
         ) : (
           <div className="flex-1 flex flex-col gap-1 p-1 md:p-2 bg-slate-100 relative">
-            <QuickExamples />
             <div className="flex-1" ref={forceRef}>
               <VizPanel title="受力分析图" titleIcon={ForceIcon}
                 extra={
