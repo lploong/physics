@@ -103,7 +103,8 @@ function inclineForcesFor(
   const pivot = config.pivot ? new Vec2(config.pivot[0], config.pivot[1]) : new Vec2(0, 0);
   const inclineLength = config.length ?? 10;
   const alongDir = new Vec2(Math.cos(rad), Math.sin(rad));
-  const normalDir = new Vec2(-Math.sin(rad), -Math.cos(rad));
+  // 屏幕坐标系 (y向下): 斜面方向 (cos, sin), 法线方向 (sin, -cos) 垂直且指向面外
+  const normalDir = new Vec2(Math.sin(rad), -Math.cos(rad));
   const relPos = body.position.sub(pivot);
   const along = relPos.dot(alongDir);
   const normal = relPos.dot(normalDir);

@@ -207,8 +207,8 @@ function buildSceneConfig(params: SceneParams, sceneType: SceneType): SceneConfi
           {
             id: "block",
             mass: params.mass,
-            position: [params.inclineLength * Math.cos(rad), -params.inclineLength * Math.sin(rad)],
-            velocity: [params.inclineInitV * Math.cos(rad), -params.inclineInitV * Math.sin(rad)],
+            position: [1.5 * Math.cos(rad), 1.5 * Math.sin(rad)],
+            velocity: [params.inclineInitV * Math.cos(rad), params.inclineInitV * Math.sin(rad)],
             shape: "rectangle",
             size: [1.5, 1],
             color: "#3b82f6",
@@ -236,7 +236,8 @@ function buildSceneConfig(params: SceneParams, sceneType: SceneType): SceneConfi
           {
             id: "projectile",
             mass: params.mass,
-            position: [0, params.projHeight],
+            // 屏幕坐标系 y 向下，高度应取负值
+            position: [0, -params.projHeight],
             velocity: [params.projSpeed * Math.cos(rad), -params.projSpeed * Math.sin(rad)],
             shape: "circle",
             size: [0.5, 0.5],

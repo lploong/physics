@@ -50,7 +50,7 @@ export function runSimulation(
 
   // 初始帧
   for (const body of bodies) {
-    body.forces = calculateForces(body, bodies, constraintList, gravity, []);
+    body.forces = calculateForces(body, bodies, constraintList, gravity, appliedForceList);
   }
   frames.push(snapshot(bodies, 0));
 
@@ -127,7 +127,8 @@ function applyConstraints(
           const relPos = body.position.sub(pivot);
           // 沿斜面方向的位移
           const alongDir = new Vec2(Math.cos(rad), Math.sin(rad));
-          const normalDir = new Vec2(-Math.sin(rad), -Math.cos(rad));
+          // 屏幕坐标系 (y向下): 斜面法线修正为垂直于斜面且指向面外
+          const normalDir = new Vec2(Math.sin(rad), -Math.cos(rad));
           const along = relPos.dot(alongDir);
           const normal = relPos.dot(normalDir);
 
